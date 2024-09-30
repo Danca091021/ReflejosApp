@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Reacción</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+            color: #333;
+            text-align: center;
+        }
+        #contador {
+            font-size: 48px;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        #mensaje {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        #iniciar {
+            background-color: #28a745;
+            color: white;
+        }
+        #iniciar:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        #reiniciar {
+            background-color: #dc3545;
+            color: white;
+        }
+        #reiniciar:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="contador">0.000</div>
+    <div id="mensaje">¡Presiona "Start" para comenzar!</div>
+    <button id="iniciar">Start</button>
+    <button id="reiniciar">Reiniciar</button>
+
+    <script>
+        let contador = 0;
+        let intervalo;
+        let iniciado = false;
+        let tiempoEspera;
+
+        document.getElementById('iniciar').addEventListener('click', function() {
+            if (!iniciado) {
+                document.getElementById('contador').textContent = "0.000";
+                document.getElementById('mensaje').textContent = "Esperando para iniciar...";
+                document.getElementById('reiniciar').style.display = "none";
+                document.getElementById('iniciar').style.display = "none";
+                
+                tiempoEspera = Math.floor(Math.random() * 5000);
+
+                setTimeout(() => {
+                    document.getElementById('mensaje').textContent = "¡Ahora!";
+                    contador = 0;
+                    iniciado = true;
+                    intervalo = setInterval(() => {
+                        contador += 10;
+                        document.getElementById('contador').textContent = (contador / 1000).toFixed(3);
+                        if (contador >= 10000) {
+                            clearInterval(intervalo);
+                            document.getElementById('mensaje').textContent = "Demasiado lento.";
+                            iniciado = false;
+                            document.getElementById('reiniciar').style.display = "block";
+                        }
+                    }, 10);
+                }, tiempoEspera);
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (iniciado && (event.key === "Enter" || event.key === " ")) {
+                clearInterval(intervalo);
+                let tiempoReact = contador;
+                let mensaje;
+
+                if (tiempoReact <= 20) {
+                    mensaje = "¡Es trampa, estoy seguro!";
+                } else if (tiempoReact <= 50) {
+                    mensaje = "¡Rompiste un récord, crack!";
+                } else if (tiempoReact <= 120) {
+                    mensaje = "¡Popular entre las chicas, dedos rápidos eh?";
+                } else if (tiempoReact <= 220) {
+                    mensaje = "¡Muy buen tiempo, crack!";
+                } else if (tiempoReact <= 320) {
+                    mensaje = "¡Joven aún, bien hecho!";
+                } else if (tiempoReact <= 450) {
+                    mensaje = "¡Ejercita esos reflejos y nunca juegues de portero!";
+                } else {
+                    mensaje = "OK? Ve al médico.";
+                }
+
+                document.getElementById('mensaje').textContent = `Tiempo: ${(contador / 1000).toFixed(3)} segundos. ${mensaje}`;
+                iniciado = false;
+                document.getElementById('reiniciar').style.display = "block";
+            }
+        });
+
+        document.getElementById('reiniciar').addEventListener('click', function() {
+            contador = 0;
+            document.getElementById('contador').textContent = "0.000";
+            document.getElementById('mensaje').textContent = "¡Presiona 'Start' para comenzar!";
+            this.style.display = "none";
+            document.getElementById('iniciar').style.display = "block";
+        });
+    </script>
+</body>
+</html>
